@@ -4,6 +4,8 @@
 * run `uv pip install matplotlib `
 * run `uv run --with jupyter jupyter lab`
 
+## Lab 2+
+* run `git clone https://github.com/Pittawat2542/krathu-500.git`
 
 #### Try Locally with Ollama
 * install ollama: `brew install ollama`
