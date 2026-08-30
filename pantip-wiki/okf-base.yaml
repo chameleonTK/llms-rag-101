@@ -1,0 +1,94 @@
+# okf-base.example.yaml — example manifest for okflint
+#
+# Copy this file as `okf-base.yaml` at the root of your documentary base,
+# then adapt it to your taxonomy.
+#
+# okflint is a GENERIC ENGINE: it knows no type vocabulary in hard code.
+# THIS manifest defines your conformance standard.
+#
+# Three control stages (see docs/RULES.md):
+#   - OKF core   : hardcoded, always active (F001, F002, R001, R002)
+#   - Profile    : your rules, declared in `profile` below
+#   - Hygiene    : checks stricter than OKF, opt-in via `hygiene`
+
+okf_version: "0.1"
+
+base:
+  # Logical name of the documentary base.
+  name: "My documentary base"
+
+  # Physical roots of the base. Multiple roots are allowed: links are
+  # resolved against the full base index, not against an isolated folder.
+  roots:
+    - path: "."
+      exclude_patterns:      # optional: glob patterns (fnmatch) to skip
+        - ".venv/**"         # Python virtual environments
+        - "node_modules/**"  # JS/TS dependencies
+        - ".git/**"          # git internals
+
+  # OKF reserved files (exempt from type validation).
+  reserved_files:
+    index: "index.md"
+    log: "log.md"
+
+  # Link resolution.
+  link_resolution:
+    scope: base          # links resolve against the entire base
+    external_refs: []    # out-of-base file names assumed valid (never "broken")
+
+# ---------------------------------------------------------------------------
+# PROFILE (optional) — your contractual refinement on top of the OKF core.
+# If this block is absent, only the OKF core applies.
+# ---------------------------------------------------------------------------
+profile:
+  # Fields that must be in ISO YYYY-MM-DD format if present (rule S102).
+  date_fields: [created, updated]
+
+  # Type-aware vocabulary. Each type declares:
+  #   - required        : mandatory frontmatter fields
+  #   - optional        : allowed frontmatter fields (optional)
+  #   - aliases         : tolerated spellings of the type, normalised to the canonical name
+  #   - <prop>_values   : controlled vocabulary for the property named <prop>
+  #       (e.g. status_values constrains the `status` field). Orthogonal to
+  #       required/optional: it only constrains the VALUE, when the property
+  #       is present. Whether the property is required, optional, or simply
+  #       absent from a type is governed solely by required/optional above.
+  types:
+    Decision:
+      aliases: [adr, ADR]
+      required: [type, status, created]
+      optional: [updated, tags]
+      status_values: [Proposed, Accepted, Deprecated, Superseded]
+    Procedure:
+      aliases: [runbook]
+      required: [type, status, created]
+      optional: [updated, tags]
+      status_values: [draft, prod, obsolete]
+    Note:
+      required: [type, created]
+      optional: [updated, tags]
+    Reference:
+      required: [type]
+      optional: [updated, tags]
+
+# ---------------------------------------------------------------------------
+# HYGIENE (optional) — checks stricter than OKF. Each key: off | warn | error.
+# OKF requires tolerance of these cases: defaults are therefore `off` or `warn`,
+# never enforced.
+# ---------------------------------------------------------------------------
+hygiene:
+  broken_links: warn       # L001, L002, L003 — broken / ambiguous links
+  split_candidates: warn   # S202 — semantic-cohesion split candidates
+
+  # Optional sub-block tuning the S202 gate. Omit entirely to keep every
+  # default below.
+  # split:
+  #   min_lines: 0           # skip files shorter than this many lines
+  #   exempt_types: []       # profile type names (e.g. [Reference]) never checked
+  #   exempt_paths: []       # glob patterns (fnmatch) never checked
+  #   tau: 0.15              # cosine similarity threshold for cohesion clustering.
+  #                          # Advanced — leave the default unless you understand
+  #                          # the cosine clustering; higher = more fragmentation.
+
+  reserved_files: off      # R201 — presence of index.md / log.md
+  unknown_fields: off      # F201 — fields outside the declared schema
