@@ -1,0 +1,32 @@
+[project]
+name = "llms-rag-101"
+version = "0.1.0"
+description = "Resources for the seminar titled \"LLM & RAGs 101\""
+authors = [
+    { name = "Pakawat Nakwijit", email = "pakawat.nk@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "faiss-cpu",
+    "ipython",
+    "langchain",
+    "langchain-community",
+    "langchain-google-genai",
+    "langchain-text-splitters",
+    "langgraph",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "pydantic",
+    "pythainlp",
+    "python-dotenv",
+    "pyyaml",
+    "rank-bm25",
+    "scikit-learn",
+    "scipy",
+    "seaborn",
+    "textcase",
+    "tqdm",
+    "typing-extensions",
+]
